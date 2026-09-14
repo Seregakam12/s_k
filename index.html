@@ -1499,5 +1499,304 @@
 
     configureContacts();
   </script>
+<script>
+(() => {
+  function initWorkPhotoViewer() {
+    // Какие фотографии можно открывать:
+    // с классом work-example-photo или атрибутом data-full.
+    const photoSelector =
+      "img.work-example-photo, img[data-full]";
+
+    // Добавляем оформление.
+    if (!document.getElementById("work-photo-viewer-styles")) {
+      const style = document.createElement("style");
+      style.id = "work-photo-viewer-styles";
+
+      style.textContent = `
+        img.work-example-photo,
+        img[data-full] {
+          cursor: zoom-in;
+        }
+
+        #work-photo-viewer {
+          position: fixed;
+          inset: 0;
+
+          width: 100%;
+          height: 100vh;
+          height: 100dvh;
+
+          max-width: none;
+          max-height: none;
+
+          margin: 0;
+          padding: 16px;
+          border: 0;
+          box-sizing: border-box;
+
+          background: rgba(0, 0, 0, 0.93);
+          color: #fff;
+          overflow: hidden;
+        }
+
+        #work-photo-viewer::backdrop {
+          background: rgba(0, 0, 0, 0.6);
+        }
+
+        #work-photo-viewer .work-photo-viewer__content {
+          width: 100%;
+          height: 100%;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          padding: 52px 0 16px;
+          box-sizing: border-box;
+        }
+
+        #work-photo-large {
+          display: block;
+
+          width: auto;
+          height: auto;
+          max-width: 100%;
+          max-height: 100%;
+
+          margin: 0;
+          object-fit: contain;
+        }
+
+        #work-photo-close {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          z-index: 1;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          width: 44px;
+          height: 44px;
+          padding: 0;
+          border: 0;
+          border-radius: 50%;
+
+          background: #fff;
+          color: #111;
+
+          font-family: Arial, sans-serif;
+          font-size: 32px;
+          line-height: 1;
+          cursor: pointer;
+        }
+
+        #work-photo-close:focus-visible {
+          outline: 3px solid #5bbcff;
+          outline-offset: 3px;
+        }
+
+        #work-photo-status {
+          max-width: 480px;
+          margin: 0;
+          padding: 16px;
+
+          color: #fff;
+          font: 16px/1.5 Arial, sans-serif;
+          text-align: center;
+        }
+
+        #work-photo-viewer [hidden] {
+          display: none !important;
+        }
+      `;
+
+      document.head.appendChild(style);
+    }
+
+    // Используем существующее окно или создаём новое.
+    let viewer = document.getElementById("work-photo-viewer");
+
+    if (!viewer) {
+      viewer = document.createElement("dialog");
+      viewer.id = "work-photo-viewer";
+      viewer.setAttribute(
+        "aria-label",
+        "Просмотр фотографии работы"
+      );
+
+      viewer.innerHTML = `
+        <div class="work-photo-viewer__content">
+          <button
+            id="work-photo-close"
+            class="work-photo-viewer__close"
+            type="button"
+            aria-label="Закрыть фотографию"
+            autofocus
+          >
+            ×
+          </button>
+
+          <img
+            id="work-photo-large"
+            class="work-photo-viewer__image"
+            alt="Фото выполненной работы"
+            hidden
+          >
+        </div>
+      `;
+
+      document.body.appendChild(viewer);
+    }
+
+    // Не подключаем обработчики повторно.
+    if (viewer.dataset.photoViewerReady === "true") return;
+
+    const largePhoto = viewer.querySelector("#work-photo-large");
+    const closeButton = viewer.querySelector("#work-photo-close");
+    const content = viewer.querySelector(
+      ".work-photo-viewer__content"
+    );
+
+    if (
+      !largePhoto ||
+      !closeButton ||
+      !content ||
+      typeof viewer.showModal !== "function"
+    ) {
+      console.error(
+        "Просмотр фотографий: проверьте разметку dialog и поддержку браузера."
+      );
+      return;
+    }
+
+    viewer.dataset.photoViewerReady = "true";
+    // Сообщение о загрузке или ошибке.
+    let status = viewer.querySelector("#work-photo-status");
+
+    if (!status) {
+      status = document.createElement("p");
+      status.id = "work-photo-status";
+      status.setAttribute("role", "status");
+      status.hidden = true;
+      content.appendChild(status);
+    }
+
+    let previousOverflow = "";
+    let previousFocus = null;
+
+    function openWorkPhoto(photo) {
+      if (viewer.open) return;
+
+      const imageUrl =
+        photo.dataset.full?.trim() ||
+        photo.currentSrc ||
+        photo.src;
+
+      if (!imageUrl) return;
+
+      previousFocus = document.activeElement;
+      previousOverflow =
+        document.documentElement.style.overflow;
+
+      largePhoto.hidden = true;
+      largePhoto.alt =
+        photo.alt || "Фото выполненной работы";
+
+      status.textContent = "Загрузка фотографии…";
+      status.hidden = false;
+
+      viewer.showModal();
+      document.documentElement.style.overflow = "hidden";
+
+      largePhoto.src = imageUrl;
+    }
+
+    function closeWorkPhoto() {
+      if (viewer.open) {
+        viewer.close();
+      }
+    }
+
+    // Показываем фотографию после загрузки.
+    largePhoto.addEventListener("load", () => {
+      if (!viewer.open) return;
+
+      status.hidden = true;
+      largePhoto.hidden = false;
+    });
+
+    // Если ссылка недоступна, показываем понятное сообщение.
+    largePhoto.addEventListener("error", () => {
+      if (!viewer.open) return;
+
+      largePhoto.hidden = true;
+      status.textContent =
+        "Не удалось загрузить фотографию. Закройте окно и попробуйте ещё раз.";
+      status.hidden = false;
+    });
+
+    // Работает и для фотографий, добавленных в переписку позже.
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+
+      const photo = event.target.closest(photoSelector);
+
+      if (!photo || viewer.contains(photo)) return;
+
+      // Не переходим по ссылке, если фотография находится внутри неё.
+      event.preventDefault();
+
+      openWorkPhoto(photo);
+    });
+
+    // Закрываем крестиком.
+    closeButton.addEventListener("click", closeWorkPhoto);
+
+    // Закрываем нажатием на свободный тёмный фон.
+    viewer.addEventListener("click", (event) => {
+      if (
+        event.target === viewer ||
+        event.target === content
+      ) {
+        closeWorkPhoto();
+      }
+    });
+
+    // Esc закрывает dialog автоматически.
+    // После любого закрытия восстанавливаем страницу.
+    viewer.addEventListener("close", () => {
+      document.documentElement.style.overflow =
+        previousOverflow;
+
+      largePhoto.removeAttribute("src");
+      largePhoto.hidden = true;
+      status.hidden = true;
+
+      if (
+        previousFocus instanceof HTMLElement &&
+        previousFocus.isConnected
+      ) {
+        previousFocus.focus({ preventScroll: true });
+      }
+
+      previousFocus = null;
+    });
+  }
+
+  // Скрипт сработает даже если его вставили выше разметки страницы.
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      initWorkPhotoViewer,
+      { once: true }
+    );
+  } else {
+    initWorkPhotoViewer();
+  }
+})();
+</script>
+
 </body>
 </html>
