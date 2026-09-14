@@ -574,12 +574,29 @@
       Для работы помощника включите JavaScript в настройках браузера.
     </p>
   </noscript>
+<script>
+    /*
+      НАСТРОЙКИ МАСТЕРСКОЙ
 
-  <script>
+      Вставьте реальные контакты.
+      Не размещайте здесь пароли и токены.
+
+      В projects добавляйте только реальные выполненные работы:
+      {
+        title: "Название выполненного проекта",
+        description: "Что действительно было сделано",
+        tasks: ["restore", "landscape"],
+        image: "images/lesnoye-01.jpg"
+      }
+
+      Допустимые tasks: install, restore, landscape, turnkey, help.
+      До добавления проектов сайт не выдаёт примеры за реальные работы.
+    */
     const CONFIG = {
       phone: "+375291510353",
       phoneDisplay: "+375291510353",
       email: "ooosilakamnia@gmail.com",
+
       projects: [
         {
           title: "Благоустройство стандартного 2х2.3 захоронения клд.Лесное г.Минск",
@@ -679,7 +696,8 @@
         budgetMode: "Хочу сначала понять стоимость",
         budget: "",
         timing: "",
-        photos: []
+
+         photos: []
       };
     }
 
@@ -721,35 +739,42 @@
       showScreen(navigation.dataset.go);
     });
 
-    $("#scenario-list").innerHTML = SCENARIOS.map((item, index) => `
-      <button class="scenario" type="button" data-scenario="${item.id}">
-        <span class="number" aria-hidden="true">0${index + 1}</span>
-        <strong>${escapeHTML(item.title)}</strong>
-        <span>${escapeHTML(item.description)}</span>
-      </button>
-    `).join("");
+    // Инициализация сценариев
+    function initScenarios() {
+      const scenarioList = $("#scenario-list");
+      if (!scenarioList) return;
 
-    $("#scenario-list").addEventListener("click", event => {
-      const button = event.target.closest("[data-scenario]");
-      if (!button) return;
+      scenarioList.innerHTML = SCENARIOS.map((item, index) => `
+        <button class="scenario" type="button" data-scenario="${item.id}">
+          <span class="number" aria-hidden="true">0${index + 1}</span>
+          <strong>${escapeHTML(item.title)}</strong>
+          <span>${escapeHTML(item.description)}</span>
+        </button>
+      `).join("");
 
-      const scenario = SCENARIOS.find(item => item.id === button.dataset.scenario);
+      scenarioList.addEventListener("click", event => {
+        const button = event.target.closest("[data-scenario]");
+        if (!button) return;
 
-      if (state.scenario !== scenario.id) {
-        state.photos.forEach(photo => URL.revokeObjectURL(photo.url));
-        state = initialState();
-        state.scenario = scenario.id;
-        state.task = scenario.task;
+        const scenario = SCENARIOS.find(item => item.id === button.dataset.scenario);
 
-        if (scenario.id === "remote") {
-          state.priorities = ["Работы без моего присутствия"];
+        // Повторный вход в ту же ситуацию сохраняет ответы.
+        if (state.scenario !== scenario.id) {
+          state.photos.forEach(photo => URL.revokeObjectURL(photo.url));
+          state = initialState();
+          state.scenario = scenario.id;
+          state.task = scenario.task;
+
+          if (scenario.id === "remote") {
+            state.priorities = ["Работы без моего присутствия"];
+          }
         }
-      }
 
-      step = 1;
-      renderStep();
-      showScreen("wizard");
-    });
+        step = 1;
+        renderStep();
+        showScreen("wizard");
+      });
+    }
 
     function options(name, items, selected, type = "radio") {
       return `<div class="options">${items.map(item => {
@@ -809,12 +834,22 @@
         "Не знаю — нужна оценка"
       ];
     }
-
     function renderStep() {
-      $("#step-label").textContent = `Шаг ${step} из 5`;
-      $("#progress-fill").style.width = `${step * 20}%`;
-      $("#progress").setAttribute("aria-valuenow", step);
-      $("#next-button").textContent = step === 5
+      const stepLabel = $("#step-label");
+      const progressFill = $("#progress-fill");
+      const progress = $("#progress");
+      const nextButton = $("#next-button");
+      const stepContent = $("#step-content");
+
+      if (!stepLabel || !progressFill || !progress || !nextButton || !stepContent) {
+        console.error("Не найдены элементы формы");
+        return;
+      }
+
+      stepLabel.textContent = `Шаг ${step} из 5`;
+      progressFill.style.width = `${step * 20}%`;
+      progress.setAttribute("aria-valuenow", step);
+      nextButton.textContent = step === 5
         ? "Посмотреть предварительное решение"
         : "Продолжить →";
 
@@ -998,38 +1033,56 @@
         `;
       }
 
-      $("#step-content").innerHTML = content;
+      stepContent.innerHTML = content;
 
       if (step === 2) {
-        $('[name="later"]').addEventListener("change", event => {
-          ["city", "cemetery"].forEach(name => {
-            const input = document.querySelector(`[name="${name}"]`);
-            input.disabled = event.target.checked;
-            input.required = !event.target.checked;
+        const laterCheckbox = document.querySelector('[name="later"]');
+        if (laterCheckbox) {
+          laterCheckbox.addEventListener("change", event => {
+            ["city", "cemetery"].forEach(name => {
+              const input = document.querySelector(`[name="${name}"]`);
+              if (input) {
+                input.disabled = event.target.checked;
+                input.required = !event.target.checked;
+              }
+            });
           });
-        });
+        }
       }
 
       if (step === 3) {
-        $("#photo-input").addEventListener("change", addPhotos);
+        const photoInput = document.getElementById("photo-input");
+        if (photoInput) {
+          photoInput.addEventListener("change", addPhotos);
+        }
         renderPhotos();
       }
 
       if (step === 5) {
-        $("#budget-mode").addEventListener("change", event => {
-          $("#budget-field").hidden = event.target.value !== "Есть ориентир";
-        });
+        const budgetMode = document.getElementById("budget-mode");
+        if (budgetMode) {
+          budgetMode.addEventListener("change", event => {
+            const budgetField = document.getElementById("budget-field");
+            if (budgetField) {
+              budgetField.hidden = event.target.value !== "Есть ориентир";
+            }
+          });
+        }
       }
 
       requestAnimationFrame(() => {
-        if (!$("#wizard").hidden) {
-          $("#step-content h2").focus({ preventScroll: true });
+        const h2 = stepContent.querySelector("h2");
+        if (h2) {
+          h2.focus({ preventScroll: true });
         }
       });
     }
 
     function saveStep() {
-      const data = new FormData($("#wizard-form"));
+      const form = $("#wizard-form");
+      if (!form) return;
+
+      const data = new FormData(form);
 
       if (step === 1) {
         const task = data.get("task") || "help";
@@ -1043,8 +1096,8 @@
 
       if (step === 2) {
         state.later = data.has("later");
-        state.city = $('[name="city"]').value.trim();
-        state.cemetery = $('[name="cemetery"]').value.trim();
+        state.city = document.querySelector('[name="city"]')?.value.trim() || "";
+        state.cemetery = document.querySelector('[name="cemetery"]')?.value.trim() || "";
       }
 
       if (step === 3) {
@@ -1061,32 +1114,6 @@
         state.timing = String(data.get("timing") || "").trim();
       }
     }
-
-    $("#wizard-form").addEventListener("submit", event => {
-      event.preventDefault();
-      saveStep();
-
-      if (step < 5) {
-        step++;
-        renderStep();
-        window.scrollTo({ top: 0, behavior: "instant" });
-      } else {
-        renderResult();
-        showScreen("result");
-      }
-    });
-    $("#previous-button").addEventListener("click", () => {
-      saveStep();
-      if (step === 1) return showScreen("situations");
-      step--;
-      renderStep();
-    });
-
-    $("#edit-answers").addEventListener("click", () => {
-      step = 1;
-      renderStep();
-      showScreen("wizard");
-    });
 
     function addPhotos(event) {
       const errors = [];
@@ -1115,11 +1142,17 @@
 
       event.target.value = "";
       renderPhotos();
-      $("#photo-status").textContent = errors.join(" ");
+
+      const photoStatus = document.getElementById("photo-status");
+      if (photoStatus) {
+        photoStatus.textContent = errors.join(" ");
+      }
     }
 
     function renderPhotos() {
-      const container = $("#photo-previews");
+      const container = document.getElementById("photo-previews");
+      if (!container) return;
+
       container.replaceChildren();
 
       state.photos.forEach((photo, index) => {
@@ -1280,10 +1313,13 @@
     }
 
     function renderResult() {
+      const resultContent = $("#result-content");
+      if (!resultContent) return;
+
       lastResult = buildResult();
       const taskLabel = TASKS.find(item => item[0] === state.task)[1];
 
-      $("#result-content").innerHTML = `
+      resultContent.innerHTML = `
         <p class="eyebrow">По вашим ответам</p>
         <h2 tabindex="-1">С чего можно начать</h2>
         <div class="tags">
@@ -1297,6 +1333,7 @@
           <h3>Возможный состав работ</h3>
           ${list(lastResult.works)}
         </section>
+
         ${["install", "turnkey"].includes(state.task) ? `
           <section class="result-section">
             <h3>Оформление памятника</h3>
@@ -1386,7 +1423,10 @@
         </div>
       `;
 
-      $("#request-proposal").addEventListener("click", prepareProposal);
+      const requestProposal = document.getElementById("request-proposal");
+      if (requestProposal) {
+        requestProposal.addEventListener("click", prepareProposal);
+      }
     }
 
     function prepareProposal() {
@@ -1420,60 +1460,149 @@
         ...lastResult.works.map(item => `— ${item}`),
         "",
         "Прошу уточнить возможные решения, стоимость и необходимость выезда."
-      ];
+      );
 
       const text = lines.join("\n");
-      $("#proposal-text").value = text;
-      $("#copy-status").textContent = "";
+      const proposalText = document.getElementById("proposal-text");
+      if (proposalText) {
+        proposalText.value = text;
+      }
+
+      const copyStatus = document.getElementById("copy-status");
+      if (copyStatus) {
+        copyStatus.textContent = "";
+      }
 
       if (CONFIG.email) {
-        $("#email-proposal").hidden = false;
-        $("#email-proposal").href =
-          `mailto:${CONFIG.email}?subject=${encodeURIComponent("Запрос — Сила Камня")}` +
-          `&body=${encodeURIComponent(text)}`;
+        const emailProposal = document.getElementById("email-proposal");
+        if (emailProposal) {
+          emailProposal.hidden = false;
+          emailProposal.href =
+            `mailto:${CONFIG.email}?subject=${encodeURIComponent("Запрос — Сила Камня")}` +
+            `&body=${encodeURIComponent(text)}`;
+        }
       }
+
       showScreen("proposal");
     }
 
-    $("#copy-proposal").addEventListener("click", async () => {
-      const text = $("#proposal-text");
+    // Инициализация обработчиков формы
+    function initForm() {
+      const form = $("#wizard-form");
+      if (!form) return;
 
-      try {
-        if (!navigator.clipboard) throw new Error("Clipboard unavailable");
-        await navigator.clipboard.writeText(text.value);
-        $("#copy-status").textContent =
-          "Обращение скопировано. Фотографии приложите отдельно.";
-      } catch {
-        text.focus();
-        text.select();
-        $("#copy-status").textContent =
-          "Текст выделен. Скопируйте его через меню устройства или Ctrl+C / Cmd+C.";
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        saveStep();
+
+        if (step < 5) {
+          step++;
+          renderStep();
+          window.scrollTo({ top: 0, behavior: "instant" });
+        } else {
+          renderResult();
+          showScreen("result");
+        }
+      });
+
+      const previousButton = document.getElementById("previous-button");
+      if (previousButton) {
+        previousButton.addEventListener("click", () => {
+          saveStep();
+          if (step === 1) return showScreen("situations");
+          step--;
+          renderStep();
+        });
       }
-    });
+    }
+
+    // Инициализация кнопки редактирования
+    function initEditAnswers() {
+      const editAnswers = document.getElementById("edit-answers");
+      if (editAnswers) {
+        editAnswers.addEventListener("click", () => {
+          step = 1;
+          renderStep();
+          showScreen("wizard");
+        });
+      }
+    }
+
+    // Инициализация кнопки копирования
+    function initCopyProposal() {
+      const copyProposal = document.getElementById("copy-proposal");
+      if (copyProposal) {
+        copyProposal.addEventListener("click", async () => {
+          const text = document.getElementById("proposal-text");
+          const copyStatus = document.getElementById("copy-status");
+
+          if (!text || !copyStatus) return;
+
+          try {
+            if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+            await navigator.clipboard.writeText(text.value);
+            copyStatus.textContent =
+              "Обращение скопировано. Фотографии приложите отдельно.";
+          } catch {
+            text.focus();
+            text.select();
+            copyStatus.textContent =
+              "Текст выделен. Скопируйте его через меню устройства или Ctrl+C / Cmd+C.";
+          }
+        });
+      }
+    }
 
     function configureContacts() {
       if (CONFIG.phone) {
         const href = `tel:${CONFIG.phone.replace(/[^\d+]/g, "")}`;
 
         ["#phone-link", "#proposal-phone", "#contact-call"].forEach(selector => {
-          $(selector).href = href;
-          $(selector).hidden = false;
+          const el = $(selector);
+          if (el) {
+            el.href = href;
+            el.hidden = false;
+          }
         });
 
-        $("#contact-description").textContent =
-          CONFIG.phoneDisplay || CONFIG.phone;
+        const contactDescription = document.getElementById("contact-description");
+        if (contactDescription) {
+          contactDescription.textContent = CONFIG.phoneDisplay || CONFIG.phone;
+        }
       } else {
-        $("#contact-description").textContent =
-          "Номер мастерской пока не указан. В рабочей версии эта ссылка будет открывать звонок.";
+        const contactDescription = document.getElementById("contact-description");
+        if (contactDescription) {
+          contactDescription.textContent =
+            "Номер мастерской пока не указан. В рабочей версии эта ссылка будет открывать звонок.";
+        }
 
-        $("#phone-link").addEventListener("click", event => {
-          event.preventDefault();
-          showScreen("contact");
-        });
+        const phoneLink = $("#phone-link");
+        if (phoneLink) {
+          phoneLink.addEventListener("click", event => {
+            event.preventDefault();
+            showScreen("contact");
+          });
+        }
       }
     }
 
-    configureContacts();
+    // Инициализация при загрузке
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        initScenarios();
+        initForm();
+        initEditAnswers();
+        initCopyProposal();
+        configureContacts();
+      });
+    } else {
+      initScenarios();
+      initForm();
+      initEditAnswers();
+      initCopyProposal();
+      configureContacts();
+    }
   </script>
+
 </body>
 </html>
