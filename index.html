@@ -58,7 +58,7 @@
     h1, h2 {
       font-weight: 500;
       line-height: 1.18;
-      letter-spacing: -.035em;
+      letter-spacing: -0.035em;
     }
 
     h2 { font-size: clamp(29px, 4vw, 44px); }
@@ -75,7 +75,7 @@
         linear-gradient(135deg, #f1f2ed, #e8eeec);
     }
 
-    .screen:not([hidden]) { animation: appear .4s ease both; }
+    .screen:not([hidden]) { animation: appear 0.4s ease both; }
 
     .center-screen {
       display: grid;
@@ -101,7 +101,7 @@
       background: none;
       padding: 35px 16px;
       border-radius: var(--radius);
-      transition: transform .2s ease, background .2s ease;
+      transition: transform 0.2s ease, background 0.2s ease;
       max-width: 100%;
     }
 
@@ -129,14 +129,14 @@
       margin-top: 32px;
       font-size: 15px;
       font-weight: 400;
-      letter-spacing: .03em;
+      letter-spacing: 0.03em;
       border-bottom: 1px solid #52778980;
       padding-bottom: 5px;
     }
 
     .eyebrow {
       text-transform: uppercase;
-      letter-spacing: .16em;
+      letter-spacing: 0.16em;
       font-size: 12px;
       color: var(--muted);
     }
@@ -154,7 +154,7 @@
       padding: clamp(25px, 5vw, 58px);
       background: #ffffff85;
       box-shadow: 0 20px 70px #425d5810;
-      transition: background .2s, transform .2s;
+      transition: background 0.2s, transform 0.2s;
     }
 
     .intro-button:hover { background: #ffffffc9; transform: translateY(-2px); }
@@ -184,7 +184,7 @@
       display: block;
       font-size: 11px;
       font-weight: 400;
-      letter-spacing: .1em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
     }
@@ -218,7 +218,7 @@
       background: #ffffffb8;
       color: var(--ink);
       box-shadow: 0 8px 30px #344f4b04;
-      transition: transform .2s, box-shadow .2s;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .scenario:hover {
@@ -270,7 +270,7 @@
     .progress-fill {
       height: 100%;
       background: #60878a;
-      transition: width .25s;
+      transition: width 0.25s;
     }
 
     fieldset { margin: 0 0 24px; padding: 0; border: 0; min-width: 0; }
@@ -332,6 +332,7 @@
       font-size: 14px;
       margin: 20px 0;
     }
+
     .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
     .btn {
@@ -577,55 +578,37 @@
   </noscript>
 
   <script>
-    /*
-      НАСТРОЙКИ МАСТЕРСКОЙ
-
-      Вставьте реальные контакты.
-      Не размещайте здесь пароли и токены.
-
-      В projects добавляйте только реальные выполненные работы:
-      {
-        title: "Название выполненного проекта",
-        description: "Что действительно было сделано",
-        tasks: ["restore", "landscape"],
-        image: "images/lesnoye-01.jpg"
-      }
-
-      Допустимые tasks: install, restore, landscape, turnkey, help.
-      До добавления проектов сайт не выдаёт примеры за реальные работы.
-    */
     const CONFIG = {
-  phone: "+375291510353",
-  phoneDisplay: "+375291510353",
-  email: "ooosilakamnia@gmail.com",
+      phone: "+375291510353",
+      phoneDisplay: "+375291510353",
+      email: "ooosilakamnia@gmail.com",
 
-  projects: [
-    {
-      title: "Благоустройство стандартного 2х2.3 захоронения клд.Лесное г.Минск",
-      description:
-        "Стаяла задача: сразу сделать общий семейный мемориальный комплекс под ключ, вторая стела без оформления, памятник изначально устанавливается по центру площадки, " +
-        "Перечень выполненых работ: заливка ленточного фундамента 20см.; установка бессер-блока обычного колотого серого; заливка армированной ж/б плиты 10см. с опорой на бессер по всему периметру, в резервном месте стяжка 2-3см. без армирования; укладка керамогранита 60х60см.; установка гранита(памятник комбинированный 2 вида камня, ограда угловая) ",
-      tasks: ["install", "landscape", "turnkey"],
-      image: "images/works/lesnoye-01.jpg"
-    },
-    {
-      title: "Название второй выполненной работы",
-      description:
-        "Укажите реальный состав работ по этому объекту. " +
-        "Например: изготовление памятника, оформление и монтаж.",
-      tasks: ["install"],
-      image: "images/works/project-02.jpg"
-    },
-    {
-      title: "Название третьей выполненной работы",
-      description:
-        "Опишите реальный комплекс работ и особенности согласования с заказчиком.",
-      tasks: ["turnkey", "landscape"],
-      image: "images/works/project-03.jpg"
-    }
-  ]
-};
-
+      projects: [
+        {
+          title: "Благоустройство стандартного 2х2.3 захоронения клд.Лесное г.Минск",
+          description:
+            "Стояла задача: сразу сделать общий семейный мемориальный комплекс под ключ, вторая стела без оформления, памятник изначально устанавливается по центру площадки. " +
+            "Перечень выполненных работ: заливка ленточного фундамента 20 см; установка бессер-блока обычного колотого серого; заливка армированной ж/б плиты 10 см с опорой на бессер по всему периметру, в резервном месте стяжка 2-3 см без армирования; укладка керамогранита 60х60 см; установка гранита (памятник комбинированный 2 вида камня, ограда угловая).",
+          tasks: ["install", "landscape", "turnkey"],
+          image: ""
+        },
+        {
+          title: "Название второй выполненной работы",
+          description:
+            "Укажите реальный состав работ по этому объекту. " +
+            "Например: изготовление памятника, оформление и монтаж.",
+          tasks: ["install"],
+          image: ""
+        },
+        {
+          title: "Название третьей выполненной работы",
+          description:
+            "Опишите реальный комплекс работ и особенности согласования с заказчиком.",
+          tasks: ["turnkey", "landscape"],
+          image: ""
+        }
+      ]
+    };
 
     const SCENARIOS = [
       {
@@ -755,7 +738,6 @@
 
       const scenario = SCENARIOS.find(item => item.id === button.dataset.scenario);
 
-      // Повторный вход в ту же ситуацию сохраняет ответы.
       if (state.scenario !== scenario.id) {
         state.photos.forEach(photo => URL.revokeObjectURL(photo.url));
         state = initialState();
@@ -1064,7 +1046,6 @@
 
       if (step === 2) {
         state.later = data.has("later");
-        // Значения сохраняются даже при выборе «Уточню позже».
         state.city = $('[name="city"]').value.trim();
         state.cemetery = $('[name="cemetery"]').value.trim();
       }
@@ -1444,7 +1425,7 @@
         ...lastResult.works.map(item => `— ${item}`),
         "",
         "Прошу уточнить возможные решения, стоимость и необходимость выезда."
-      );
+      ];
 
       const text = lines.join("\n");
       $("#proposal-text").value = text;
@@ -1499,304 +1480,5 @@
 
     configureContacts();
   </script>
-<script>
-(() => {
-  function initWorkPhotoViewer() {
-    // Какие фотографии можно открывать:
-    // с классом work-example-photo или атрибутом data-full.
-    const photoSelector =
-      "img.work-example-photo, img[data-full]";
-
-    // Добавляем оформление.
-    if (!document.getElementById("work-photo-viewer-styles")) {
-      const style = document.createElement("style");
-      style.id = "work-photo-viewer-styles";
-
-      style.textContent = `
-        img.work-example-photo,
-        img[data-full] {
-          cursor: zoom-in;
-        }
-
-        #work-photo-viewer {
-          position: fixed;
-          inset: 0;
-
-          width: 100%;
-          height: 100vh;
-          height: 100dvh;
-
-          max-width: none;
-          max-height: none;
-
-          margin: 0;
-          padding: 16px;
-          border: 0;
-          box-sizing: border-box;
-
-          background: rgba(0, 0, 0, 0.93);
-          color: #fff;
-          overflow: hidden;
-        }
-
-        #work-photo-viewer::backdrop {
-          background: rgba(0, 0, 0, 0.6);
-        }
-
-        #work-photo-viewer .work-photo-viewer__content {
-          width: 100%;
-          height: 100%;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          padding: 52px 0 16px;
-          box-sizing: border-box;
-        }
-
-        #work-photo-large {
-          display: block;
-
-          width: auto;
-          height: auto;
-          max-width: 100%;
-          max-height: 100%;
-
-          margin: 0;
-          object-fit: contain;
-        }
-
-        #work-photo-close {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          z-index: 1;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          width: 44px;
-          height: 44px;
-          padding: 0;
-          border: 0;
-          border-radius: 50%;
-
-          background: #fff;
-          color: #111;
-
-          font-family: Arial, sans-serif;
-          font-size: 32px;
-          line-height: 1;
-          cursor: pointer;
-        }
-
-        #work-photo-close:focus-visible {
-          outline: 3px solid #5bbcff;
-          outline-offset: 3px;
-        }
-
-        #work-photo-status {
-          max-width: 480px;
-          margin: 0;
-          padding: 16px;
-
-          color: #fff;
-          font: 16px/1.5 Arial, sans-serif;
-          text-align: center;
-        }
-
-        #work-photo-viewer [hidden] {
-          display: none !important;
-        }
-      `;
-
-      document.head.appendChild(style);
-    }
-
-    // Используем существующее окно или создаём новое.
-    let viewer = document.getElementById("work-photo-viewer");
-
-    if (!viewer) {
-      viewer = document.createElement("dialog");
-      viewer.id = "work-photo-viewer";
-      viewer.setAttribute(
-        "aria-label",
-        "Просмотр фотографии работы"
-      );
-
-      viewer.innerHTML = `
-        <div class="work-photo-viewer__content">
-          <button
-            id="work-photo-close"
-            class="work-photo-viewer__close"
-            type="button"
-            aria-label="Закрыть фотографию"
-            autofocus
-          >
-            ×
-          </button>
-
-          <img
-            id="work-photo-large"
-            class="work-photo-viewer__image"
-            alt="Фото выполненной работы"
-            hidden
-          >
-        </div>
-      `;
-
-      document.body.appendChild(viewer);
-    }
-
-    // Не подключаем обработчики повторно.
-    if (viewer.dataset.photoViewerReady === "true") return;
-
-    const largePhoto = viewer.querySelector("#work-photo-large");
-    const closeButton = viewer.querySelector("#work-photo-close");
-    const content = viewer.querySelector(
-      ".work-photo-viewer__content"
-    );
-
-    if (
-      !largePhoto ||
-      !closeButton ||
-      !content ||
-      typeof viewer.showModal !== "function"
-    ) {
-      console.error(
-        "Просмотр фотографий: проверьте разметку dialog и поддержку браузера."
-      );
-      return;
-    }
-
-    viewer.dataset.photoViewerReady = "true";
-    // Сообщение о загрузке или ошибке.
-    let status = viewer.querySelector("#work-photo-status");
-
-    if (!status) {
-      status = document.createElement("p");
-      status.id = "work-photo-status";
-      status.setAttribute("role", "status");
-      status.hidden = true;
-      content.appendChild(status);
-    }
-
-    let previousOverflow = "";
-    let previousFocus = null;
-
-    function openWorkPhoto(photo) {
-      if (viewer.open) return;
-
-      const imageUrl =
-        photo.dataset.full?.trim() ||
-        photo.currentSrc ||
-        photo.src;
-
-      if (!imageUrl) return;
-
-      previousFocus = document.activeElement;
-      previousOverflow =
-        document.documentElement.style.overflow;
-
-      largePhoto.hidden = true;
-      largePhoto.alt =
-        photo.alt || "Фото выполненной работы";
-
-      status.textContent = "Загрузка фотографии…";
-      status.hidden = false;
-
-      viewer.showModal();
-      document.documentElement.style.overflow = "hidden";
-
-      largePhoto.src = imageUrl;
-    }
-
-    function closeWorkPhoto() {
-      if (viewer.open) {
-        viewer.close();
-      }
-    }
-
-    // Показываем фотографию после загрузки.
-    largePhoto.addEventListener("load", () => {
-      if (!viewer.open) return;
-
-      status.hidden = true;
-      largePhoto.hidden = false;
-    });
-
-    // Если ссылка недоступна, показываем понятное сообщение.
-    largePhoto.addEventListener("error", () => {
-      if (!viewer.open) return;
-
-      largePhoto.hidden = true;
-      status.textContent =
-        "Не удалось загрузить фотографию. Закройте окно и попробуйте ещё раз.";
-      status.hidden = false;
-    });
-
-    // Работает и для фотографий, добавленных в переписку позже.
-    document.addEventListener("click", (event) => {
-      if (!(event.target instanceof Element)) return;
-
-      const photo = event.target.closest(photoSelector);
-
-      if (!photo || viewer.contains(photo)) return;
-
-      // Не переходим по ссылке, если фотография находится внутри неё.
-      event.preventDefault();
-
-      openWorkPhoto(photo);
-    });
-
-    // Закрываем крестиком.
-    closeButton.addEventListener("click", closeWorkPhoto);
-
-    // Закрываем нажатием на свободный тёмный фон.
-    viewer.addEventListener("click", (event) => {
-      if (
-        event.target === viewer ||
-        event.target === content
-      ) {
-        closeWorkPhoto();
-      }
-    });
-
-    // Esc закрывает dialog автоматически.
-    // После любого закрытия восстанавливаем страницу.
-    viewer.addEventListener("close", () => {
-      document.documentElement.style.overflow =
-        previousOverflow;
-
-      largePhoto.removeAttribute("src");
-      largePhoto.hidden = true;
-      status.hidden = true;
-
-      if (
-        previousFocus instanceof HTMLElement &&
-        previousFocus.isConnected
-      ) {
-        previousFocus.focus({ preventScroll: true });
-      }
-
-      previousFocus = null;
-    });
-  }
-
-  // Скрипт сработает даже если его вставили выше разметки страницы.
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      initWorkPhotoViewer,
-      { once: true }
-    );
-  } else {
-    initWorkPhotoViewer();
-  }
-})();
-</script>
-
 </body>
 </html>
