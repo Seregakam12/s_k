@@ -11,7 +11,6 @@
     и выбрать благоустройство участка. Предварительный подбор без обязательств."
   >
 
-  <!-- Рукописный шрифт. При отсутствии интернета используется запасной. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -58,7 +57,7 @@
     h1, h2 {
       font-weight: 500;
       line-height: 1.18;
-      letter-spacing: -0.035em;
+      letter-spacing: -.035em;
     }
 
     h2 { font-size: clamp(29px, 4vw, 44px); }
@@ -75,7 +74,7 @@
         linear-gradient(135deg, #f1f2ed, #e8eeec);
     }
 
-    .screen:not([hidden]) { animation: appear 0.4s ease both; }
+    .screen:not([hidden]) { animation: appear .4s ease both; }
 
     .center-screen {
       display: grid;
@@ -101,7 +100,7 @@
       background: none;
       padding: 35px 16px;
       border-radius: var(--radius);
-      transition: transform 0.2s ease, background 0.2s ease;
+      transition: transform .2s ease, background .2s ease;
       max-width: 100%;
     }
 
@@ -129,14 +128,14 @@
       margin-top: 32px;
       font-size: 15px;
       font-weight: 400;
-      letter-spacing: 0.03em;
+      letter-spacing: .03em;
       border-bottom: 1px solid #52778980;
       padding-bottom: 5px;
     }
 
     .eyebrow {
       text-transform: uppercase;
-      letter-spacing: 0.16em;
+      letter-spacing: .16em;
       font-size: 12px;
       color: var(--muted);
     }
@@ -154,9 +153,8 @@
       padding: clamp(25px, 5vw, 58px);
       background: #ffffff85;
       box-shadow: 0 20px 70px #425d5810;
-      transition: background 0.2s, transform 0.2s;
+      transition: background .2s, transform .2s;
     }
-
     .intro-button:hover { background: #ffffffc9; transform: translateY(-2px); }
 
     .container { width: min(100%, 1050px); margin: 0 auto; }
@@ -184,7 +182,7 @@
       display: block;
       font-size: 11px;
       font-weight: 400;
-      letter-spacing: 0.1em;
+      letter-spacing: .1em;
       text-transform: uppercase;
       color: var(--muted);
     }
@@ -218,7 +216,8 @@
       background: #ffffffb8;
       color: var(--ink);
       box-shadow: 0 8px 30px #344f4b04;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
     }
 
     .scenario:hover {
@@ -270,7 +269,7 @@
     .progress-fill {
       height: 100%;
       background: #60878a;
-      transition: width 0.25s;
+      transition: width .25s;
     }
 
     fieldset { margin: 0 0 24px; padding: 0; border: 0; min-width: 0; }
@@ -332,7 +331,6 @@
       font-size: 14px;
       margin: 20px 0;
     }
-
     .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
     .btn {
@@ -576,7 +574,8 @@
       Для работы помощника включите JavaScript в настройках браузера.
     </p>
   </noscript>
-<script>
+
+  <script>
     const CONFIG = {
       phone: "+375291510353",
       phoneDisplay: "+375291510353",
@@ -691,20 +690,17 @@
     const $ = (selector) => document.querySelector(selector);
 
     function escapeHTML(value) {
-      return String(value ?? "").replace(/[&<>"']/g, (char) => {
-        const map = {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;"
-        };
-        return map[char];
-      });
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
     }
 
     function showScreen(id) {
-      document.querySelectorAll(".screen").forEach((screen) => {
+      document.querySelectorAll(".screen").forEach(screen => {
         screen.hidden = screen.id !== id;
       });
       window.scrollTo({ top: 0, behavior: "instant" });
@@ -717,7 +713,7 @@
       });
     }
 
-    document.addEventListener("click", (event) => {
+    document.addEventListener("click", event => {
       const navigation = event.target.closest("[data-go]");
       if (!navigation) return;
 
@@ -733,14 +729,14 @@
       </button>
     `).join("");
 
-    $("#scenario-list").addEventListener("click", (event) => {
+    $("#scenario-list").addEventListener("click", event => {
       const button = event.target.closest("[data-scenario]");
       if (!button) return;
 
-      const scenario = SCENARIOS.find((item) => item.id === button.dataset.scenario);
+      const scenario = SCENARIOS.find(item => item.id === button.dataset.scenario);
 
       if (state.scenario !== scenario.id) {
-        state.photos.forEach((photo) => URL.revokeObjectURL(photo.url));
+        state.photos.forEach(photo => URL.revokeObjectURL(photo.url));
         state = initialState();
         state.scenario = scenario.id;
         state.task = scenario.task;
@@ -756,7 +752,7 @@
     });
 
     function options(name, items, selected, type = "radio") {
-      return `<div class="options">${items.map((item) => {
+      return `<div class="options">${items.map(item => {
         const [value, label] = Array.isArray(item) ? item : [item, item];
         const checked = Array.isArray(selected)
           ? selected.includes(value)
@@ -777,7 +773,7 @@
     }
 
     function selectOptions(items, selected) {
-      return items.map((item) => `
+      return items.map(item => `
         <option value="${escapeHTML(item)}" ${item === selected ? "selected" : ""}>
           ${escapeHTML(item)}
         </option>
@@ -1005,8 +1001,8 @@
       $("#step-content").innerHTML = content;
 
       if (step === 2) {
-        $('[name="later"]').addEventListener("change", (event) => {
-          ["city", "cemetery"].forEach((name) => {
+        $('[name="later"]').addEventListener("change", event => {
+          ["city", "cemetery"].forEach(name => {
             const input = document.querySelector(`[name="${name}"]`);
             input.disabled = event.target.checked;
             input.required = !event.target.checked;
@@ -1020,7 +1016,7 @@
       }
 
       if (step === 5) {
-        $("#budget-mode").addEventListener("change", (event) => {
+        $("#budget-mode").addEventListener("change", event => {
           $("#budget-field").hidden = event.target.value !== "Есть ориентир";
         });
       }
@@ -1066,7 +1062,7 @@
       }
     }
 
-    $("#wizard-form").addEventListener("submit", (event) => {
+    $("#wizard-form").addEventListener("submit", event => {
       event.preventDefault();
       saveStep();
 
@@ -1079,7 +1075,6 @@
         showScreen("result");
       }
     });
-
     $("#previous-button").addEventListener("click", () => {
       saveStep();
       if (step === 1) return showScreen("situations");
@@ -1262,14 +1257,14 @@
       }
 
       const projects = CONFIG.projects
-        .filter((project) => Array.isArray(project.tasks) && project.tasks.includes(state.task))
+        .filter(project => Array.isArray(project.tasks) && project.tasks.includes(state.task))
         .slice(0, 3);
 
       return { summary, works, clarify, projects };
     }
 
     function list(items) {
-      return `<ul>${items.map((item) => `<li>${escapeHTML(item)}</li>`).join("")}</ul>`;
+      return `<ul>${items.map(item => `<li>${escapeHTML(item)}</li>`).join("")}</ul>`;
     }
 
     function locationText() {
@@ -1286,7 +1281,7 @@
 
     function renderResult() {
       lastResult = buildResult();
-      const taskLabel = TASKS.find((item) => item[0] === state.task)[1];
+      const taskLabel = TASKS.find(item => item[0] === state.task)[1];
 
       $("#result-content").innerHTML = `
         <p class="eyebrow">По вашим ответам</p>
@@ -1302,7 +1297,6 @@
           <h3>Возможный состав работ</h3>
           ${list(lastResult.works)}
         </section>
-
         ${["install", "turnkey"].includes(state.task) ? `
           <section class="result-section">
             <h3>Оформление памятника</h3>
@@ -1332,7 +1326,7 @@
           <h3>Похожие выполненные проекты</h3>
           ${lastResult.projects.length ? `
             <div class="projects">
-              ${lastResult.projects.map((project) => `
+              ${lastResult.projects.map(project => `
                 <article class="project">
                   ${project.image ? `
                     <img
@@ -1396,8 +1390,8 @@
     }
 
     function prepareProposal() {
-      const scenario = SCENARIOS.find((item) => item.id === state.scenario);
-      const task = TASKS.find((item) => item[0] === state.task)[1];
+      const scenario = SCENARIOS.find(item => item.id === state.scenario);
+      const task = TASKS.find(item => item[0] === state.task)[1];
 
       const lines = [
         "Здравствуйте! Хочу обсудить работы с мастерской «Сила Камня».",
@@ -1423,7 +1417,7 @@
         lastResult.summary,
         "",
         "Возможный состав работ:",
-        ...lastResult.works.map((item) => `— ${item}`),
+        ...lastResult.works.map(item => `— ${item}`),
         "",
         "Прошу уточнить возможные решения, стоимость и необходимость выезда."
       ];
@@ -1461,7 +1455,7 @@
       if (CONFIG.phone) {
         const href = `tel:${CONFIG.phone.replace(/[^\d+]/g, "")}`;
 
-        ["#phone-link", "#proposal-phone", "#contact-call"].forEach((selector) => {
+        ["#phone-link", "#proposal-phone", "#contact-call"].forEach(selector => {
           $(selector).href = href;
           $(selector).hidden = false;
         });
@@ -1472,7 +1466,7 @@
         $("#contact-description").textContent =
           "Номер мастерской пока не указан. В рабочей версии эта ссылка будет открывать звонок.";
 
-        $("#phone-link").addEventListener("click", (event) => {
+        $("#phone-link").addEventListener("click", event => {
           event.preventDefault();
           showScreen("contact");
         });
@@ -1481,250 +1475,5 @@
 
     configureContacts();
   </script>
-
-  <script>
-    (() => {
-      function initWorkPhotoViewer() {
-        const photoSelector = "img.work-example-photo, img[data-full]";
-
-        if (!document.getElementById("work-photo-viewer-styles")) {
-          const style = document.createElement("style");
-          style.id = "work-photo-viewer-styles";
-
-          style.textContent = `
-            img.work-example-photo,
-            img[data-full] {
-              cursor: zoom-in;
-            }
-
-            #work-photo-viewer {
-              position: fixed;
-              inset: 0;
-              width: 100%;
-              height: 100vh;
-              height: 100dvh;
-              max-width: none;
-              max-height: none;
-              margin: 0;
-              padding: 16px;
-              border: 0;
-              box-sizing: border-box;
-              background: rgba(0, 0, 0, 0.93);
-              color: #fff;
-              overflow: hidden;
-            }
-
-            #work-photo-viewer::backdrop {
-              background: rgba(0, 0, 0, 0.6);
-            }
-
-            #work-photo-viewer .work-photo-viewer__content {
-              width: 100%;
-              height: 100%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: 52px 0 16px;
-              box-sizing: border-box;
-            }
-
-            #work-photo-large {
-              display: block;
-              width: auto;
-              height: auto;
-              max-width: 100%;
-              max-height: 100%;
-              margin: 0;
-              object-fit: contain;
-            }
-
-            #work-photo-close {
-              position: absolute;
-              top: 12px;
-              right: 12px;
-              z-index: 1;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              width: 44px;
-              height: 44px;
-              padding: 0;
-              border: 0;
-              border-radius: 50%;
-              background: #fff;
-              color: #111;
-              font-family: Arial, sans-serif;
-              font-size: 32px;
-              line-height: 1;
-              cursor: pointer;
-            }
-
-            #work-photo-close:focus-visible {
-              outline: 3px solid #5bbcff;
-              outline-offset: 3px;
-            }
-
-            #work-photo-status {
-              max-width: 480px;
-              margin: 0;
-              padding: 16px;
-              color: #fff;
-              font: 16px/1.5 Arial, sans-serif;
-              text-align: center;
-            }
-
-            #work-photo-viewer [hidden] {
-              display: none !important;
-            }
-          `;
-
-          document.head.appendChild(style);
-        }
-
-        let viewer = document.getElementById("work-photo-viewer");
-
-        if (!viewer) {
-          viewer = document.createElement("dialog");
-          viewer.id = "work-photo-viewer";
-          viewer.setAttribute("aria-label", "Просмотр фотографии работы");
-
-          viewer.innerHTML = `
-            <div class="work-photo-viewer__content">
-              <button
-                id="work-photo-close"
-                class="work-photo-viewer__close"
-                type="button"
-                aria-label="Закрыть фотографию"
-                autofocus
-              >
-                ×
-              </button>
-
-              <img
-                id="work-photo-large"
-                class="work-photo-viewer__image"
-                alt="Фото выполненной работы"
-                hidden
-              >
-            </div>
-          `;
-
-          document.body.appendChild(viewer);
-        }
-
-        if (viewer.dataset.photoViewerReady === "true") return;
-
-        const largePhoto = viewer.querySelector("#work-photo-large");
-        const closeButton = viewer.querySelector("#work-photo-close");
-        const content = viewer.querySelector(".work-photo-viewer__content");
-
-        if (!largePhoto || !closeButton || !content || typeof viewer.showModal !== "function") {
-          console.error(
-            "Просмотр фотографий: проверьте разметку dialog и поддержку браузера."
-          );
-          return;
-        }
-
-        viewer.dataset.photoViewerReady = "true";
-
-        let status = viewer.querySelector("#work-photo-status");
-
-        if (!status) {
-          status = document.createElement("p");
-          status.id = "work-photo-status";
-          status.setAttribute("role", "status");
-          status.hidden = true;
-          content.appendChild(status);
-        }
-
-        let previousOverflow = "";
-        let previousFocus = null;
-
-        function openWorkPhoto(photo) {
-          if (viewer.open) return;
-
-          const imageUrl = photo.dataset.full?.trim() || photo.currentSrc || photo.src;
-
-          if (!imageUrl) return;
-
-          previousFocus = document.activeElement;
-          previousOverflow = document.documentElement.style.overflow;
-
-          largePhoto.hidden = true;
-          largePhoto.alt = photo.alt || "Фото выполненной работы";
-
-          status.textContent = "Загрузка фотографии…";
-          status.hidden = false;
-
-          viewer.showModal();
-          document.documentElement.style.overflow = "hidden";
-
-          largePhoto.src = imageUrl;
-        }
-
-        function closeWorkPhoto() {
-          if (viewer.open) {
-            viewer.close();
-          }
-        }
-
-        largePhoto.addEventListener("load", () => {
-          if (!viewer.open) return;
-
-          status.hidden = true;
-          largePhoto.hidden = false;
-        });
-
-        largePhoto.addEventListener("error", () => {
-          if (!viewer.open) return;
-
-          largePhoto.hidden = true;
-          status.textContent =
-            "Не удалось загрузить фотографию. Закройте окно и попробуйте ещё раз.";
-          status.hidden = false;
-        });
-
-        document.addEventListener("click", (event) => {
-          if (!(event.target instanceof Element)) return;
-
-          const photo = event.target.closest(photoSelector);
-
-          if (!photo || viewer.contains(photo)) return;
-          event.preventDefault();
-
-          openWorkPhoto(photo);
-        });
-
-        closeButton.addEventListener("click", closeWorkPhoto);
-
-        viewer.addEventListener("click", (event) => {
-          if (event.target === viewer || event.target === content) {
-            closeWorkPhoto();
-          }
-        });
-
-        viewer.addEventListener("close", () => {
-          document.documentElement.style.overflow = previousOverflow;
-
-          largePhoto.removeAttribute("src");
-          largePhoto.hidden = true;
-          status.hidden = true;
-
-          if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
-            previousFocus.focus({ preventScroll: true });
-          }
-
-          previousFocus = null;
-        });
-      }
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initWorkPhotoViewer, { once: true });
-      } else {
-        initWorkPhotoViewer();
-      }
-    })();
-  </script>
-  
 </body>
 </html>
